@@ -1,0 +1,26 @@
+hello-starter: Starter项目,用于引入自动配置类
+selfstarter/helloautoconfiguration: 自动配置项目
+testtimestarter: 测试项目，用于导入Starter依赖
+
+实现步骤
+
+一、编写自定义的自动配置组件
+1.定义属性类。通过注解@ConfigurationProperties("xx.xx")指定读取属性值的位置,并提供属性的getter和setter方法。
+2.定义功能类。通过@Autowired注解将依赖的属性类注入，并提供实现功能的方法。
+3.定义自动配置类。通过@Configuration注解将配置类托管，并声明条件及属性类，通过@Bean注解声明一个方法返回功能类，以此将功能类作为一个Bean对象注册到Spring上下文中。
+4.在Resources资源文件目录下创建META-INF目录，此目录下创建spring.factories文件，添加自动配置类，即org.springframework.boot.autoconfigure.EnableAutoConfiguration=“自动配置类路径”
+@Configuration  //托管配置类
+@ConditionalOnClass(MyTime.class)  //条件
+@EnableConfigurationProperties(TimeProperties.class)  //属性类的bean
+
+二、编写Starter组件
+1.创建新的Maven项目，作为Starter组件
+2.在Starter组件的pom.xml文件中声明自动配置组件的依赖坐标
+
+三、通过install命令分别将自动配置项目及Starter项目构建并安装到本地Maven仓库中
+
+四、构建测试项目进行测试
+1.在项目pom.xml文件中导入Starter项目的坐标。
+2.在application.yml配置文件中对属性类的属性值进行配置
+3.启动类上加入@SpringBootApplication注解，并在功能类中通过@Autowired注解将功能类注入，实现自动配置。
+4.访问http://localhost:8080/showTime?name=Hanwen,此时服务端回传name的值+当前时间，当前时间的格式为application.yml中定义的格式
